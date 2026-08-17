@@ -456,7 +456,7 @@ if [[ "$bench_version" == "version-16" ]]; then
     required_python_full="3.14.0"
 fi
 
-if [[ -z "$py_version" ]] || [[ "$py_major" -lt 3 ]] || [[ "$py_major" -eq 3 && "$py_minor" -lt "$required_python_minor" ]]; then
+if ( [[ -z "$py_version" ]] || [[ "$py_major" -lt 3 ]] || [[ "$py_major" -eq 3 && "$py_minor" -lt "$required_python_minor" ]] ) && ! command -v python3."${required_python_minor}" &> /dev/null; then
     echo -e "${LIGHT_BLUE}It appears this instance does not meet the minimum Python version required for ERPNext ${version_choice} (Python${required_python_label})...${NC}"
     sleep 2 
     echo -e "${YELLOW}Not to worry, we will sort it out for you${NC}"
@@ -477,6 +477,9 @@ if [[ -z "$py_version" ]] || [[ "$py_major" -lt 3 ]] || [[ "$py_major" -eq 3 && 
     sudo rm Python-${required_python_full}.tgz && \
     pip3."${required_python_minor}" install --user --upgrade pip && \
     echo -e "${GREEN}Python${required_python_label} installation successful!${NC}"
+    sleep 2
+elif command -v python3."${required_python_minor}" &> /dev/null; then
+    echo -e "${GREEN}Python ${required_python_label} is already installed. Skipping compilation.${NC}"
     sleep 2
 fi
 
